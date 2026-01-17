@@ -1,0 +1,7 @@
+{
+  "name": "Gemini Live Document Voice Bot",
+  "description": "A real-time voice conversation bot that answers questions based on your uploaded documents using Gemini 2.5 Live API.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
