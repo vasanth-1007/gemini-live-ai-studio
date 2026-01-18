@@ -39,6 +39,8 @@ app.add_middleware(
 
 class RetrieveReq(BaseModel):
     query: str
+    # NEW: Allow top_k override for tool calls
+    top_k: Optional[int] = None
 
 class RetrieveResp(BaseModel):
     context: str
@@ -55,6 +57,10 @@ async def retrieve(req: RetrieveReq):
         return {"context": "(Empty query)", "sources": []}
 
     qvec = await gemini_service.embed_query(q)
-    chunks = weaviate_service.retrieve(query=q, query_vector=qvec, top_k=settings.top_k)
+    
+    # Use request top_k if provided, otherwise default to settings
+    k = req.top_k if req.top_k else settings.top_k
+    
+    chunks = weaviate_service.retrieve(query=q, query_vector=qvec, top_k=k)
     context, sources = build_context(chunks, settings.max_context_chars)
     return {"context": context, "sources": sources}
